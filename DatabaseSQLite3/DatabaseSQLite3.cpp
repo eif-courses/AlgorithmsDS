@@ -7,33 +7,32 @@
 const char* dbPath = "BANK.DB";
 int main()
 {
-  
-        
-    BankTransaction db;
-    db.OpenConnection(dbPath);
+ 
+    BankTransaction bankTransaction;
+    //db.OpenConnection(dbPath);
 
     //Database::CreateTable(db); // if exists comment this line
    // Product product("Bread", "Black bread", 2.52);
     //Database::Insert(db, product); // Insert product
 
-    //db.CreateDummyTable(dbPath);
+   // db.CreateDummyTable(dbPath);
 
-    BankAccount* ba = new BankAccount();
-    ba->SetFirstName("Marius");
-    ba->SetBalance(5555);
-    ba->SetLastName("GZ");
-    ba->SetAccountNumber(1241);
-    db.CreateAccount(ba);
-    db.PrintAllAccounts();
+    //BankAccount* ba = new BankAccount();
+    //ba->SetFirstName("Markovic");
+    //ba->SetBalance(1421);
+    //ba->SetLastName("Polovic");
+    //ba->SetAccountNumber(1243);
+    //
+    //bankTransaction.CreateAccount(ba);
+    
+    //bankTransaction.Deposit(999, 100);
+    //bankTransaction.CloseAccount(1241);
+    
+    //bankTransaction.PrintAllAccounts();
+    BankAccount* baa = bankTransaction.GetAccount(999);
+    //cout << baa->GetBalance();
+    bankTransaction.Withdraw(999, 123);
+    //cout << baa->GetBalance();
+    //db.CloseConnection();
+
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

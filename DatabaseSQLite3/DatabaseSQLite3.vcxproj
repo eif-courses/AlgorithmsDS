@@ -142,9 +142,7 @@
     <ClCompile Include="..\..\..\..\Desktop\sqlite-amalgamation-3370200\sqlite-amalgamation-3370200\sqlite3.c" />
     <ClCompile Include="BankAccount.cpp" />
     <ClCompile Include="BankTransaction.cpp" />
-    <ClCompile Include="Database.cpp" />
     <ClCompile Include="DatabaseSQLite3.cpp" />
-    <ClCompile Include="Product.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -153,8 +151,6 @@
     <ClInclude Include="..\..\..\..\Desktop\sqlite-amalgamation-3370200\sqlite-amalgamation-3370200\sqlite3.h" />
     <ClInclude Include="BankAccount.h" />
     <ClInclude Include="BankTransaction.h" />
-    <ClInclude Include="Database.h" />
-    <ClInclude Include="Product.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
