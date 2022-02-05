@@ -11,7 +11,7 @@ enum Options {
     CLOSE, END
 };
 
-int mainMenu()
+int MainMenu()
 {
     cout << "\nMenu Options" << endl
         << "1 - Print All Account"
@@ -27,58 +27,57 @@ int mainMenu()
 int main()
 {
  
-    BankTransaction* bankTransaction = new BankTransaction;
+    BankTransaction bankTransaction;
     int choice;
-    int acno;
-    string fname, lname;
-    double bal;
+    int accountNumber;
+    string firstName, lastName;
+    double balance;
 
     while (1) {
-        choice = mainMenu();
+        choice = MainMenu();
         if (choice == END)
             break;
         switch (choice) {
         case PRINT:
-            bankTransaction->PrintAllAccounts();
+            bankTransaction.PrintAllAccounts();
             break;
         case NEW:
             cout << "\nEnter account no, first name,last name, balance : "<< endl << "? ";
-            cin >> acno;
-            cin >> fname;
-            cin >> lname;
-            cin >> bal;
-            if (acno < 1) {
+            cin >> accountNumber;
+            cin >> firstName;
+            cin >> lastName;
+            cin >> balance;
+            if (accountNumber < 1) {
                 cout << "Invalid account number." << endl;
                 break;
             }
-            bankTransaction->CreateAccount(new BankAccount(acno, fname, lname,
-                bal));
+            bankTransaction.CreateAccount(BankAccount(accountNumber, firstName, lastName, balance));
             break;
         case WITHDRAW:
             cout << "\nEnter account no, amount to withdraw "<< endl << "? ";
-            cin >> acno;
-            cin >> bal;
-            if (bal < 0) {
+            cin >> accountNumber;
+            cin >> balance;
+            if (balance < 0) {
                 cout << "Invalid amount." << endl;
                 break;
             }
-            bankTransaction->Withdraw(acno, bal);
+            bankTransaction.Withdraw(accountNumber, balance);
             break;
         case DEPOSIT:
             cout << "\nEnter account no, amount to deposit " << endl << "? ";
-            cin >> acno;
-            cin >> bal;
-            if (bal < 0) {
+            cin >> accountNumber;
+            cin >> balance;
+            if (balance < 0) {
                 cout << "Invalid amount." << endl;
                 break;
             }
-            bankTransaction->Deposit(acno, bal);
+            bankTransaction.Deposit(accountNumber, balance);
             break;
         case CLOSE:
             cout << "\nEnter account no to close account "
                 << endl << "? ";
-            cin >> acno;
-            bankTransaction->CloseAccount(acno);
+            cin >> accountNumber;
+            bankTransaction.CloseAccount(accountNumber);
             break;
         default:
             cerr << "Invalid choice!" << endl;

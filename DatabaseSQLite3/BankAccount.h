@@ -5,7 +5,7 @@ using std::string;
 class BankAccount
 {
 public:
-	BankAccount(int = 0, string = "", string = "", double = 0.0);
+	BankAccount(int, string, string, double);
 
 	void SetAccountNumber(int accountNumber);
 	void SetLastName(string lastName);

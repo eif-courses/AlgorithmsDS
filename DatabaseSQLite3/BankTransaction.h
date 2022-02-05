@@ -10,8 +10,8 @@ public:
     int OpenConnection(const char* dbPath);
     void CloseConnection();
     void CreateDummyTable(const char* dbPath);
-    BankAccount* GetAccount(int accountNumber);
-    void CreateAccount(BankAccount* acc);
+    BankAccount GetAccount(int accountNumber);
+    void CreateAccount(BankAccount bankAccount);
     void CloseAccount(int acc);
     void Deposit(int id, double amount);
     void Withdraw(int id, double amount);

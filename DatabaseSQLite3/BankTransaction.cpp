@@ -15,11 +15,11 @@ void BankTransaction::CloseConnection() {
 }
 
 // Without Callback working
-BankAccount* BankTransaction::GetAccount(int accountNumber){
+BankAccount BankTransaction::GetAccount(int accountNumber){
     
     OpenConnection("BANK.DB");
     
-    BankAccount* bankAccount{};
+    BankAccount bankAccount(1, "", "", 1.2);
 
     sqlite3_stmt* statment;
     
@@ -29,11 +29,11 @@ BankAccount* BankTransaction::GetAccount(int accountNumber){
     
     if (sqlite3_bind_int(statment, 1, accountNumber) != SQLITE_OK) {
         printf("\nCould not bind integer.\n");
-        return nullptr;
+       
     }
 
     while ((rc = sqlite3_step(statment)) == SQLITE_ROW) {                                             
-        bankAccount = new BankAccount(accountNumber, string(reinterpret_cast<const char*>(sqlite3_column_text(statment, 1))), string(reinterpret_cast<const char*>(sqlite3_column_text(statment, 2))), sqlite3_column_int(statment, 3));
+        bankAccount = BankAccount(accountNumber, string(reinterpret_cast<const char*>(sqlite3_column_text(statment, 1))), string(reinterpret_cast<const char*>(sqlite3_column_text(statment, 2))), sqlite3_column_int(statment, 3));
         printf("ACCOUNT_ID: %s, BALANCE: %d eur\n", sqlite3_column_text(statment, 0), sqlite3_column_int(statment, 3));
     }
     
@@ -47,22 +47,19 @@ BankAccount* BankTransaction::GetAccount(int accountNumber){
 
 void BankTransaction::Withdraw(int accountNumber, double amount)
 {
-    BankAccount* bankAccount = GetAccount(accountNumber);
+    BankAccount bankAccount = GetAccount(accountNumber);
    
-    if (bankAccount != nullptr) {
-        if (bankAccount->GetBalance() < amount)
+        if (bankAccount.GetBalance() < amount)
             Message("Cannot withdraw. Try lower amount.");
         else {
-            bankAccount->SetBalance(bankAccount->GetBalance() - amount);
+            bankAccount.SetBalance(bankAccount.GetBalance() - amount);
 
-            Deposit(accountNumber, bankAccount->GetBalance()); // TODO you can create other function for Withdraw update Statement
+            Deposit(accountNumber, bankAccount.GetBalance()); // TODO you can create other function for Withdraw update Statement
 
             string text = "Withdraw successfull: -" + to_string(amount) + " eur";
             Message(text);
-            Message("Your current balance: " + to_string(bankAccount->GetBalance()) + " eur");
+            Message("Your current balance: " + to_string(bankAccount.GetBalance()) + " eur");
         }
-    
-    }
 }
 // WORKING
 void BankTransaction::Deposit(int accountNumber, double amount)
@@ -112,27 +109,32 @@ void BankTransaction::Deposit(int accountNumber, double amount)
 
 
 // WORKING
-void BankTransaction::CreateAccount(BankAccount* bankAccount)
+void BankTransaction::CreateAccount(BankAccount bankAccount)
 {
     OpenConnection("BANK.DB");
     sqlite3_stmt* statment;
     
-    const char* sql = "insert into BANK_ACCOUNT VALUES (?,?,?,?)";
+    const char* sql = "INSERT INTO BANK_ACCOUNT VALUES (?,?,?,?)";
 
     if (sqlite3_prepare_v2(_connection, sql, -1, &statment, nullptr) != SQLITE_OK) {
         printf("\nCould NOT EXECUTE STATEMENT!.\n");
         return;
     }
-    if (sqlite3_bind_int(statment, 1, bankAccount->GetAccountNumber()) != SQLITE_OK) {
+    if (sqlite3_bind_int(statment, 1, bankAccount.GetAccountNumber()) != SQLITE_OK) {
         printf("\nCould not bind int.\n");
         return;
     }
 
+    const char* name = bankAccount.GetFirstName().c_str();
+
+    cout << "------------------ACCOUNT NAME----------------\n" << name << "\n---------------------------------\n";
+
+
     if (sqlite3_bind_text(
         statment,
         2,  // Index of wildcard
-        bankAccount->GetFirstName().c_str(), // Data as -> const * char
-        bankAccount->GetFirstName().length(), // Data length
+        name, // Data as -> const * char
+        bankAccount.GetFirstName().length(), // Data length
         SQLITE_STATIC
     ) != SQLITE_OK) {
         printf("\nCould not bind double.\n");
@@ -141,8 +143,8 @@ void BankTransaction::CreateAccount(BankAccount* bankAccount)
     if (sqlite3_bind_text(
         statment,
         3,  // Index of wildcard
-        bankAccount->GetLastName().c_str(), // Data as -> const * char
-        bankAccount->GetLastName().length(), // Data length
+        bankAccount.GetLastName().c_str(), // Data as -> const * char
+        bankAccount.GetLastName().length(), // Data length
         SQLITE_STATIC
     ) != SQLITE_OK) {
         printf("\nCould not bind double.\n");
@@ -151,7 +153,7 @@ void BankTransaction::CreateAccount(BankAccount* bankAccount)
     if (sqlite3_bind_double(
         statment,
         4,  // Index of wildcard
-        bankAccount->GetBalance()
+        bankAccount.GetBalance()
     ) != SQLITE_OK) {
         printf("\nCould not bind int.\n");
         return;
