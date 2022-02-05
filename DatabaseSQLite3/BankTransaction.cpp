@@ -127,6 +127,7 @@ void BankTransaction::CreateAccount(BankAccount* bankAccount)
         printf("\nCould not bind int.\n");
         return;
     }
+
     if (sqlite3_bind_text(
         statment,
         2,  // Index of wildcard
