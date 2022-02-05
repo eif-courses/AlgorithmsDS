@@ -32,10 +32,9 @@ BankAccount* BankTransaction::GetAccount(int accountNumber){
         return nullptr;
     }
 
-
     while ((rc = sqlite3_step(statment)) == SQLITE_ROW) {                                             
         bankAccount = new BankAccount(accountNumber, string(reinterpret_cast<const char*>(sqlite3_column_text(statment, 1))), string(reinterpret_cast<const char*>(sqlite3_column_text(statment, 2))), sqlite3_column_int(statment, 3));
-        printf("ACCOUNT_ID: %s, BALANCE: %d eur\n", sqlite3_column_text(statment, 0), sqlite3_column_int(statment, 3)); 
+        printf("ACCOUNT_ID: %s, BALANCE: %d eur\n", sqlite3_column_text(statment, 0), sqlite3_column_int(statment, 3));
     }
     
     sqlite3_finalize(statment);
@@ -115,26 +114,16 @@ void BankTransaction::Deposit(int accountNumber, double amount)
 // WORKING
 void BankTransaction::CreateAccount(BankAccount* bankAccount)
 {
-    
     OpenConnection("BANK.DB");
     sqlite3_stmt* statment;
-    string sql;
-    sql = "insert into BANK_ACCOUNT VALUES (?,?,?,?)";
+    
+    const char* sql = "insert into BANK_ACCOUNT VALUES (?,?,?,?)";
 
-
-    if (sqlite3_prepare_v2(_connection,
-        sql.c_str(),
-        -1,
-        &statment,
-        nullptr)
-        != SQLITE_OK) {
-
+    if (sqlite3_prepare_v2(_connection, sql, -1, &statment, nullptr) != SQLITE_OK) {
+        printf("\nCould NOT EXECUTE STATEMENT!.\n");
+        return;
     }
-    if (sqlite3_bind_int(
-        statment,
-        1,  // Index of wildcard
-        bankAccount->GetAccountNumber()
-    ) != SQLITE_OK) {
+    if (sqlite3_bind_int(statment, 1, bankAccount->GetAccountNumber()) != SQLITE_OK) {
         printf("\nCould not bind int.\n");
         return;
     }
