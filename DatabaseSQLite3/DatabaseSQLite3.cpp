@@ -1,18 +1,30 @@
 // DatabaseSQLite3.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // TOOBOX FOR SQLITE PREVIEW INSIDE VISUAL STUDIO
 // https://marketplace.visualstudio.com/items?itemName=ErikEJ.SQLServerCompactSQLiteToolbox
-#include "Database.h"
+#include "BankTransaction.h"
 #include <iostream>
 #include <sqlite3.h>
+const char* dbPath = "BANK.DB";
 int main()
 {
-    sqlite3* db = Database::Connect("products.db");
+  
+        
+    BankTransaction db;
+    db.OpenConnection(dbPath);
 
     //Database::CreateTable(db); // if exists comment this line
-    Product product("Bread", "Black bread", 2.52);
+   // Product product("Bread", "Black bread", 2.52);
     //Database::Insert(db, product); // Insert product
 
-    Database::Display(db);
+    //db.CreateDummyTable(dbPath);
+
+    BankAccount* ba = new BankAccount();
+    ba->SetFirstName("Marius");
+    ba->SetBalance(5555);
+    ba->SetLastName("GZ");
+    ba->SetAccountNumber(1241);
+    db.CreateAccount(ba);
+    db.PrintAllAccounts();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

@@ -1,36 +1,23 @@
 #include "Database.h"
 
-sqlite3* Database::Connect(const string& path) {
-    sqlite3* db;
-    sqlite3_open(path.c_str(), &db);
-    if (db == nullptr) {
-        cout << "Could not open database." << endl;
-        return nullptr;
-    }
-    else {
-        cout << "Connected to database successfully!!!" << endl;
-        return db;
-    }
+int Database::OpenConnection(const char* dbPath)
+{
+    return sqlite3_open(dbPath, &_connection);
+}
+void Database::CloseConnection() {
+    sqlite3_close(_connection);
 }
 
-int Database::Callback(void* context, int columnCount, char** columnValues, char** columnName) {
 
-    for (int i = 0; i < columnCount; i++) {
-        cout << columnValues[i] << " ";
-    }
-    cout << endl;
 
-    return 0;
-}
-
-void Database::Insert(sqlite3* db, const Product& product) {
+void Database::Insert(const Product& product) {
 
     sqlite3_stmt* statment;
     string sql;
     sql = "insert into PRODUCTS VALUES (?,?,?,?)";
 
 
-    if (sqlite3_prepare_v2(db,
+    if (sqlite3_prepare_v2(_connection,
         sql.c_str(),
         -1,
         &statment,
@@ -82,23 +69,22 @@ void Database::Insert(sqlite3* db, const Product& product) {
     printf("\n");
     //select_stmt("select * from foo");
 
-    sqlite3_close(db);
+    CloseConnection();
 
 }
 
-void Database::CreateTable(sqlite3* db) {
+void Database::CreateDummyTable(const char* dbPath) {
 
     string sql;
     char* zErrMsg = nullptr;
 
     /* Open database */
-    int rc = sqlite3_open("products.db", &db);
+    int rc = OpenConnection(dbPath);
     if (rc) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return;
+        cout << "CAN'T OPEN DATABASE!" << endl;
     }
     else {
-        fprintf(stdout, "Opened database successfully\n");
+        cout << "DATABASE SUCCESSFULLY OPENED!" << endl;
     }
 
     /* Create SQL statement */
@@ -109,7 +95,7 @@ void Database::CreateTable(sqlite3* db) {
         "PRICE        REAL );";
 
     /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql.c_str(), Callback, nullptr, &zErrMsg);
+    rc = sqlite3_exec(_connection, sql.c_str(), Callback, nullptr, &zErrMsg);
 
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -118,10 +104,11 @@ void Database::CreateTable(sqlite3* db) {
     else {
         fprintf(stdout, "Table created successfully\n");
     }
-    sqlite3_close(db);
+    CloseConnection();
 }
 
-void Database::Display(sqlite3* db) {
+
+void Database::Display() {
 
     char* zErrMsg = nullptr;
     const char* data = "Callback function called";
@@ -130,7 +117,7 @@ void Database::Display(sqlite3* db) {
     string sql = "SELECT * from PRODUCTS";
 
     /* Execute SQL statement */
-    int rc = sqlite3_exec(db, sql.c_str(), Callback, (void*)data, &zErrMsg);
+    int rc = sqlite3_exec(_connection, sql.c_str(), Callback, (void*)data, &zErrMsg);
 
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -139,4 +126,14 @@ void Database::Display(sqlite3* db) {
     else {
         fprintf(stdout, "Operation done successfully\n");
     }
+}
+
+int Database::Callback(void* context, int columnCount, char** columnValues, char** columnName) {
+
+    for (int i = 0; i < columnCount; i++) {
+        cout << columnValues[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
 }
